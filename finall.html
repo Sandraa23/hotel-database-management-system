@@ -1,0 +1,515 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Hotel Management</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #e9ecef;
+            padding: 30px;
+            color: #333;
+            margin-top: 60px;
+        }
+        h1, h2 {
+            text-align: center;
+            color: #2c3e50;
+            font-size: 2.2rem;
+            margin-bottom: 25px;
+        }
+        .container {
+            max-width: 1000px;
+            margin: auto;
+            background: #ffffff;
+            padding: 30px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+            border-radius: 12px;
+            overflow: hidden;
+        }
+        .home-btn {
+            background-color: #007bff;
+            color: white;
+            padding: 12px 24px;
+            border-radius: 50px;
+            border: none;
+            cursor: pointer;
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            font-size: 1.3rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            transition: background-color 0.3s;
+        }
+        .home-btn:hover {
+            background-color: #0056b3;
+        }
+        .btn {
+            background-color: #28a745;
+            color: white;
+            padding: 16px 24px;
+            border-radius: 8px;
+            border: none;
+            cursor: pointer;
+            font-size: 1.2rem;
+            min-width: 220px;
+            text-align: center;
+            white-space: nowrap;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+        }
+        .btn:hover {
+            background-color: #218838;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+        }
+        .btn-container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 12px;
+            padding: 20px;
+            margin: 20px auto;
+            max-width: 900px;
+        }
+        @media (max-width: 768px) {
+            .btn {
+                min-width: 180px;
+                padding: 12px 20px;
+                font-size: 1rem;
+            }
+            .btn-container {
+                flex-direction: column;
+                align-items: center;
+                gap: 10px;
+                padding: 15px;
+            }
+        }
+        @media (max-width: 480px) {
+            .btn {
+                min-width: 160px;
+                padding: 10px 18px;
+                font-size: 0.95rem;
+            }
+            .btn-container {
+                gap: 8px;
+            }
+        }
+        .form-container {
+            margin-top: 20px;
+            padding: 20px;
+            background-color: #f8f9fa;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+        }
+        .form-container input, .form-container button {
+            width: 100%;
+            margin: 10px 0;
+            padding: 12px;
+            font-size: 1rem;
+            border-radius: 6px;
+            border: 1px solid #ced4da;
+            transition: border-color 0.3s;
+        }
+        .form-container input:focus, .form-container button:focus {
+            border-color: #007bff;
+            outline: none;
+        }
+        .form-container button {
+            background-color: #007bff;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+        .form-container button:hover {
+            background-color: #0056b3;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 30px;
+        }
+        th, td {
+            padding: 15px;
+            text-align: center;
+            border: 1px solid #dee2e6;
+        }
+        th {
+            background-color: #007bff;
+            color: white;
+            font-size: 1.2rem;
+        }
+        td {
+            background-color: #ffffff;
+            font-size: 1rem;
+        }
+        .bill-table {
+            width: 100%;
+            max-width: 600px;
+            margin: 20px auto;
+            border-collapse: collapse;
+            background-color: #f8f9fa;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+        .bill-table th, .bill-table td {
+            padding: 12px;
+            border: 1px solid #dee2e6;
+            text-align: left;
+        }
+        .bill-table th {
+            background-color: #2c3e50;
+            color: white;
+            font-weight: bold;
+        }
+        .bill-table td {
+            background-color: #ffffff;
+        }
+        .bill-table tr:last-child th, .bill-table tr:last-child td {
+            font-weight: bold;
+            background-color: #e9ecef;
+        }
+        .section {
+            display: none;
+        }
+        .table-container {
+            overflow-x: auto;
+            margin-top: 20px;
+        }
+        .back-btn {
+            background-color: #dc3545;
+            margin-top: 20px;
+        }
+        .back-btn:hover {
+            background-color: #c82333;
+        }
+        .login-container {
+            max-width: 400px;
+            margin: 50px auto;
+            background: #ffffff;
+            padding: 30px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+            border-radius: 12px;
+        }
+        .error {
+            color: #dc3545;
+            text-align: center;
+            font-size: 0.9rem;
+            margin-top: 10px;
+            display: none;
+        }
+    </style>
+</head>
+<body>
+
+<div id="login" class="login-container section">
+    <h1> Employee Login</h1>
+    <form id="loginForm" class="form-container">
+        <input type="text" name="employee_name" placeholder="Employee Name" required>
+        <input type="password" name="password" placeholder="Password" required>
+        <button type="submit">Login</button>
+    </form>
+    <p id="loginError" class="error"></p>
+</div>
+
+<button class="home-btn" onclick="showSection('home')" style="display: none;">🏠 Home</button>
+
+<div id="home" class="container section">
+    <h1>🏨 Hotel Management System</h1>
+    <div class="btn-container">
+        <button class="btn" onclick="showSection('customer')">Manage Customers</button>
+        <button class="btn" onclick="showSection('employee')">Manage Employees</button>
+        <button class="btn" onclick="fetchData('/view_available_rooms')">View Available Rooms</button>
+        <button class="btn" onclick="promptBill()">Billing</button>
+    </div>
+</div>
+
+<div id="customer" class="section container">
+    <h2>Customer Management</h2>
+    <div class="btn-container">
+        <button class="btn" onclick="fetchData('/view_customers')">View All Customers</button>
+        <button class="btn" onclick="searchById('customer')">Search Customer by ID</button>
+        <button class="btn" onclick="promptDelete('customer')">Delete Customer Record</button>
+        <button class="btn" onclick="promptCustomerUpdate()">Update Customer Record</button>
+        <button class="btn" onclick="toggleCustAddForm()">Add New Customer</button>
+    </div>
+
+    <div id="custUpdateForm" style="display:none;">
+        <h3>Update Customer Details</h3>
+        <form method="POST" action="/update_cust" id="custUpdateFormFields" class="form-container">
+            <input type="hidden" name="cust_id" id="cust_id_input" required>
+            <input type="text" name="cust_name" id="cust_name" placeholder="Customer Name"><br>
+            <input type="date" name="check_in_date" id="check_in_date" placeholder="Check In Date"><br>
+            <input type="date" name="check_out_date" id="check_out_date" placeholder="Check Out Date"><br>
+            <input type="number" name="room_no" id="room_no" placeholder="Room No"><br>
+            <input type="number" name="no_in_party" id="no_in_party" placeholder="No in Party"><br>
+            <input type="text" name="gender" id="gender" placeholder="Gender"><br>
+            <input type="text" name="aadhar_no" id="aadhar_no" placeholder="Aadhar No"><br>
+            <input type="text" name="phone_no" id="phone_no" placeholder="Phone No"><br>
+            <input type="email" name="email_id" id="email_id" placeholder="Email ID"><br>
+            <input type="text" name="meals" id="meals" placeholder="Meals (Optional)"><br>
+            <input type="text" name="table_no" id="table_no" placeholder="Table No (Optional)"><br>
+            <button class="btn" type="submit">Update Customer</button>
+        </form>
+    </div>
+
+    <div id="custAddForm" style="display:none;">
+        <h3>Add New Customer Booking</h3>
+        <form action="/submit" method="POST" class="form-container">
+            <input type="text" name="cust_name" placeholder="Customer Name" required><br>
+            <input type="date" name="check_in_date" placeholder="Check In Date" required><br>
+            <input type="date" name="check_out_date" placeholder="Check Out Date" required><br>
+            <input type="number" name="room_no" placeholder="Room No" required><br>
+            <input type="number" name="no_in_party" placeholder="No in Party" required><br>
+            <input type="text" name="gender" placeholder="Gender" required><br>
+            <input type="text" name="aadhar_no" placeholder="Aadhar No" required><br>
+            <input type="text" name="phone_no" placeholder="Phone No" required><br>
+            <input type="email" name="email_id" placeholder="Email ID" required><br>
+            <input type="text" name="meals" placeholder="Meals (Optional)"><br>
+            <input type="text" name="table_no" placeholder="Table No (Optional)"><br>
+            <button class="btn" type="submit">Submit Customer</button>
+        </form>
+    </div>
+</div>
+
+<div id="employee" class="section container">
+    <h2>Employee Management</h2>
+    <div class="btn-container">
+        <button class="btn" onclick="fetchData('/view_employees')">View All Employees</button>
+        <button class="btn" onclick="searchById('employee')">Search Employee by ID</button>
+        <button class="btn" onclick="promptDelete('employee')">Delete Employee Record</button>
+        <button class="btn" onclick="toggleForm('empUpdateForm')">Update Employee Record</button>
+        <button class="btn" onclick="toggleEmpAddForm()">Add New Employee</button>
+    </div>
+
+    <div id="empUpdateForm" style="display:none;">
+        <h3>Update Employee Details</h3>
+        <form method="POST" action="/update_emp" class="form-container">
+            <input type="text" name="id" placeholder="Employee ID" required><br>
+            <input type="text" name="name" placeholder="Employee Name" required><br>
+            <input type="text" name="designation" placeholder="Designation" required><br>
+            <button class="btn" type="submit">Update Employee</button>
+        </form>
+    </div>
+
+    <div id="empAddForm" style="display:none;">
+        <h3>Add New Employee</h3>
+        <form action="/submit" method="POST" class="form-container">
+            <input type="text" name="E_name" placeholder="Employee Name" required><br>
+            <input type="text" name="designation" placeholder="Designation" required><br>
+            <input type="text" name="department" placeholder="Department" required><br>
+            <input type="date" name="date_of_joining" placeholder="Date of Joining" required><br>
+            <button class="btn" type="submit">Submit Employee</button>
+        </form>
+    </div>
+</div>
+
+<div id="output" class="section container">
+    <div id="data"></div>
+</div>
+
+<script>
+    // Check if login is required (passed from server)
+    const loginRequired = {{ login_required | tojson }};
+
+    // Initialize page state
+    document.addEventListener('DOMContentLoaded', function() {
+        if (loginRequired) {
+            showSection('login');
+            document.querySelector('.home-btn').style.display = 'none';
+        } else {
+            showSection('home');
+            document.querySelector('.home-btn').style.display = 'flex';
+        }
+    });
+
+    // Handle login form submission
+    document.getElementById('loginForm').addEventListener('submit', function(e) {
+        e.preventDefault();
+        const formData = new FormData(this);
+        const loginError = document.getElementById('loginError');
+        
+        fetch('/login', {
+            method: 'POST',
+            body: formData
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                loginError.style.display = 'none';
+                loginError.textContent = '';
+                showSection('home');
+                document.querySelector('.home-btn').style.display = 'flex';
+            } else {
+                loginError.textContent = data.error;
+                loginError.style.display = 'block';
+            }
+        })
+        .catch(error => {
+            loginError.textContent = 'Error during login. Please try again.';
+            loginError.style.display = 'block';
+            console.error(error);
+        });
+    });
+
+    function showSection(sectionId) {
+        document.getElementById('login').style.display = 'none';
+        document.getElementById('home').style.display = 'none';
+        document.getElementById('customer').style.display = 'none';
+        document.getElementById('employee').style.display = 'none';
+        document.getElementById('output').style.display = 'none';
+        document.getElementById(sectionId).style.display = sectionId === 'login' ? 'block' : 'block';
+    }
+
+    function fetchData(url) {
+        fetch(url)
+            .then(response => response.json())
+            .then(data => {
+                showSection('output');
+                let html;
+                if (data.error) {
+                    html = `<p style="color: red;">${data.error}</p>`;
+                } else if (url.includes('/get_bill/')) {
+                    // Handle bill data
+                    html = `<h3>Bill for ${data.cust_name}</h3>`;
+                    html += `<div class="table-container"><table class="bill-table">`;
+                    html += `<tr><th>Detail</th><th>Value</th></tr>`;
+                    html += `<tr><td>Customer Name</td><td>${data.cust_name}</td></tr>`;
+                    html += `<tr><td>Room Number</td><td>${data.room_no}</td></tr>`;
+                    html += `<tr><td>Room Type</td><td>${data.room_type}</td></tr>`;
+                    html += `<tr><td>Check-in Date</td><td>${new Date(data.check_in_date).toLocaleDateString('en-GB')}</td></tr>`;
+                    html += `<tr><td>Check-out Date</td><td>${new Date(data.check_out_date).toLocaleDateString('en-GB')}</td></tr>`;
+                    html += `<tr><td>Stay Duration</td><td>${data.stay_duration} days</td></tr>`;
+                    html += `<tr><td>Meals Opted</td><td>${data.meals}</td></tr>`;
+                    html += `<tr><td>Number in Party</td><td>${data.no_in_party}</td></tr>`;
+                    html += `<tr><td>Room Costs</td><td>₹${data.room_costs.toFixed(2)}</td></tr>`;
+                    html += `<tr><td>Meal Costs</td><td>₹${data.meal_costs.toFixed(2)}</td></tr>`;
+                    html += `<tr><td>Total Bill</td><td>₹${data.total_bill.toFixed(2)}</td></tr>`;
+                    html += `</table></div>`;
+                } else {
+                    // Handle other data (e.g., customers, rooms, employees)
+                    const records = Array.isArray(data) ? data : [data];
+                    html = "<div class='table-container'><table><tr>";
+                    for (let key in records[0]) {
+                        html += `<th>${key}</th>`;
+                    }
+                    html += "</tr>";
+                    records.forEach(row => {
+                        html += "<tr>";
+                        for (let key in row) {
+                            let value = row[key];
+                            if (key.includes('date') && value) {
+                                let date = new Date(value);
+                                if (!isNaN(date)) {
+                                    value = date.toLocaleDateString('en-GB');
+                                }
+                            }
+                            html += `<td>${value}</td>`;
+                        }
+                        html += "</tr>";
+                    });
+                    html += "</table></div>";
+                }
+                document.getElementById('data').innerHTML = html;
+            })
+            .catch(error => {
+                document.getElementById('data').innerHTML = "Error fetching data.";
+                console.error(error);
+            });
+    }
+
+    function searchById(type) {
+        let id = prompt(`Enter ${type === 'customer' ? 'Customer ID' : 'Employee ID'} to search:`);
+        if (!id || isNaN(id)) {
+            alert("Invalid ID.");
+            return;
+        }
+        const url = type === 'customer' ? `/get_customer/${id}` : `/get_employee/${id}`;
+        fetchData(url);
+    }
+
+    function promptBill() {
+        let custId = prompt("Enter Customer ID for billing:");
+        if (!custId || isNaN(custId)) {
+            alert("Invalid Customer ID.");
+            return;
+        }
+        fetchData(`/get_bill/${custId}`);
+    }
+
+    function promptDelete(type) {
+        let id = prompt(`Enter ${type === 'customer' ? 'Customer ID' : 'Employee ID'} to delete:`);
+        if (!id || isNaN(id)) {
+            alert("Invalid ID.");
+            return;
+        }
+        const url = type === 'customer' ? `/delete_customer/${id}` : `/delete_employee/${id}`;
+        fetch(url, { method: 'POST' })
+            .then(response => response.json())
+            .then(data => {
+                alert(data.status);
+                if (type === 'customer') fetchData('/view_customers');
+                else fetchData('/view_employees');
+            })
+            .catch(err => {
+                alert("Error deleting record.");
+                console.error(err);
+            });
+    }
+
+    function toggleForm(id) {
+        var form = document.getElementById(id);
+        form.style.display = (form.style.display === "none") ? "block" : "none";
+    }
+
+    function toggleCustAddForm() {
+        toggleForm('custAddForm');
+    }
+
+    function toggleEmpAddForm() {
+        toggleForm('empAddForm');
+    }
+
+    function promptCustomerUpdate() {
+        let custId = prompt("Enter Customer ID to update:");
+        if (!custId || isNaN(custId)) {
+            alert("Invalid Customer ID.");
+            return;
+        }
+        document.getElementById('cust_id_input').value = custId;
+        
+        // Fetch customer data to pre-fill the form
+        fetch(`/get_customer/${custId}`)
+            .then(response => response.json())
+            .then(data => {
+                if (data.error) {
+                    alert(data.error);
+                    return;
+                }
+                document.getElementById('cust_name').value = data.cust_name || '';
+                document.getElementById('check_in_date').value = data.check_in_date || '';
+                document.getElementById('check_out_date').value = data.check_out_date || '';
+                document.getElementById('room_no').value = data.room_no || '';
+                document.getElementById('no_in_party').value = data.no_in_party || '';
+                document.getElementById('gender').value = data.gender || '';
+                document.getElementById('aadhar_no').value = data.aadhar_no || '';
+                document.getElementById('phone_no').value = data.phone_no || '';
+                document.getElementById('email_id').value = data.email_id || '';
+                document.getElementById('meals').value = data.Meals || '';
+                document.getElementById('table_no').value = data.Table_no || '';
+                toggleForm('custUpdateForm');
+            })
+            .catch(err => {
+                alert("Error fetching customer data.");
+                console.error(err);
+            });
+    }
+</script>
+
+</body>
+</html>
